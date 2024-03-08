@@ -8,6 +8,7 @@ import com.advpro.profiling.tutorial.repository.StudentCourseRepository;
 import com.advpro.profiling.tutorial.repository.StudentRepository;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +29,11 @@ public class DataSeedService {
     @Autowired
     private StudentCourseRepository studentCourseRepository;
 
-    private static final int NUMBER_OF_STUDENTS = 20_000;
-    private static final int NUMBER_OF_COURSE = 10;
+    @Value("${seed.students:20000}")
+    private int NUMBER_OF_STUDENTS;
+
+    @Value("${seed.courses:10}")
+    private int NUMBER_OF_COURSE;
 
     public void seedStudent() {
         Faker faker = new Faker(new Locale("in-ID"));
