@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.advpro.profiling</groupId>
-    <artifactId>tutorial</artifactId>
+    <artifactId>csui-cscm602223-module-5</artifactId>
     <version>0.0.2-SNAPSHOT</version>
 
-    <name>tutorial</name>
+    <name>CSCUI CSCM602223 Module 5</name>
     <description>Tutorial for AdvPro - Profiling</description>
 
     <properties>
@@ -59,11 +59,23 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <docker>
+                        <publishRegistry>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <url>${docker.publishRegistry.url}</url>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <username>${docker.publishRegistry.username}</username>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <password>${docker.publishRegistry.password}</password>
+                        </publishRegistry>
+                    </docker>
                     <image>
-                        <name>ghcr.io/${registry.username}/${project.artifactId}:${project.version}</name>
+                        <!--suppress UnresolvedMavenProperty -->
+                        <name>ghcr.io/${docker.publishRegistry.username}/${project.artifactId}:${project.version}</name>
                         <env>
                             <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
                         </env>
+                        <publish>true</publish>
                     </image>
                 </configuration>
             </plugin>
