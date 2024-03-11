@@ -9,8 +9,8 @@ on:
     types: [ opened, synchronize, reopened ]
 
 jobs:
-  test:
-    name: Run test suite
+  ci:
+    name: Run CI
     runs-on: ubuntu-22.04
 
     services:
@@ -59,6 +59,8 @@ jobs:
           cache: maven
       - name: Run unit tests
         run: ./mvnw $MAVEN_CLI_OPTS test
+      - name: Generate coverage report
+        run: ./mvnw $MAVEN_CLI_OPTS jacoco:report
       - name: Run SonarScanner
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
