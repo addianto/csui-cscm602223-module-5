@@ -2,7 +2,6 @@ package com.advpro.profiling.tutorial.controller;
 
 import com.advpro.profiling.tutorial.model.Student;
 import com.advpro.profiling.tutorial.model.StudentCourse;
-import com.advpro.profiling.tutorial.service.DataSeedService;
 import com.advpro.profiling.tutorial.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +18,31 @@ import java.util.Optional;
 @RestController
 public class StudentController {
 
+    private final StudentService studentService;
+
     @Autowired
-    private StudentService studentService;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @GetMapping("/all-student")
     public ResponseEntity<String> seedStudents() {
         List<StudentCourse> studentCourses = studentService.getAllStudentsWithCourses();
         return ResponseEntity.ok(studentCourses.toString());
     }
+
     @GetMapping("/highest-gpa")
     public ResponseEntity<String> highestGpa() {
         Optional<Student> studentWithHighestGpa = studentService.findStudentWithHighestGpa();
-        return ResponseEntity.ok(studentWithHighestGpa.get().toString());
+
+        return studentWithHighestGpa.map(student -> ResponseEntity.ok(student.toString()))
+                                    .orElseGet(() -> ResponseEntity.notFound()
+                                                                   .build());
     }
+
     @GetMapping("/all-student-name")
     public ResponseEntity<String> allStudentName() {
         String joinedStudentNames = studentService.joinStudentNames();
         return ResponseEntity.ok(joinedStudentNames);
     }
 }
-
