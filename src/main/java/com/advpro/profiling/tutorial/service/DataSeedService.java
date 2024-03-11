@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * @author muhammad.khadafi
@@ -25,12 +23,9 @@ public class DataSeedService {
 
     private static final SecureRandom random = new SecureRandom();
 
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private CourseRepository courseRepository;
-    @Autowired
-    private StudentCourseRepository studentCourseRepository;
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
+    private final StudentCourseRepository studentCourseRepository;
 
     @Value("${seed.students:20000}")
     private int NUMBER_OF_STUDENTS;
@@ -38,15 +33,26 @@ public class DataSeedService {
     @Value("${seed.courses:10}")
     private int NUMBER_OF_COURSE;
 
+    @Autowired
+    public DataSeedService(StudentRepository studentRepository, CourseRepository courseRepository, StudentCourseRepository studentCourseRepository) {
+        this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
+        this.studentCourseRepository = studentCourseRepository;
+    }
+
     public void seedStudent() {
         Faker faker = new Faker(new Locale("in-ID"));
 
         for (int i = 0; i < NUMBER_OF_STUDENTS; i++) {
             Student student = new Student();
-            student.setStudentCode(faker.code().ean8());
-            student.setName(faker.name().fullName());
-            student.setFaculty(faker.educator().course());
-            student.setGpa(faker.number().randomDouble(2, 2, 4));
+            student.setStudentCode(faker.code()
+                                        .ean8());
+            student.setName(faker.name()
+                                 .fullName());
+            student.setFaculty(faker.educator()
+                                    .course());
+            student.setGpa(faker.number()
+                                .randomDouble(2, 2, 4));
 
             studentRepository.save(student);
         }
@@ -56,9 +62,12 @@ public class DataSeedService {
         Faker faker = new Faker(new Locale("in-ID"));
         for (int i = 0; i < NUMBER_OF_COURSE; i++) {
             Course course = new Course();
-            course.setCourseCode(faker.code().ean8());
-            course.setName(faker.book().title());
-            course.setDescription(faker.lorem().sentence());
+            course.setCourseCode(faker.code()
+                                      .ean8());
+            course.setName(faker.book()
+                                .title());
+            course.setDescription(faker.lorem()
+                                       .sentence());
 
             courseRepository.save(course);
         }
@@ -70,10 +79,10 @@ public class DataSeedService {
 
         for (Student student : students) {
             List<Course> selectedCourses = random.ints(0, courses.size())
-                    .distinct()
-                    .limit(2)
-                    .mapToObj(courses::get)
-                    .collect(Collectors.toList());
+                                                 .distinct()
+                                                 .limit(2)
+                                                 .mapToObj(courses::get)
+                                                 .toList();
 
             for (Course course : selectedCourses) {
                 StudentCourse studentCourse = new StudentCourse(student, course);
