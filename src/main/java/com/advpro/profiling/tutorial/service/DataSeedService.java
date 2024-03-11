@@ -29,10 +29,10 @@ public class DataSeedService {
     private final StudentCourseRepository studentCourseRepository;
 
     @Value("${seed.students:20000}")
-    private int NUMBER_OF_STUDENTS;
+    private int numOfStudents;
 
     @Value("${seed.courses:10}")
-    private int NUMBER_OF_COURSE;
+    private int numOfCourses;
 
     @Autowired
     public DataSeedService(StudentRepository studentRepository, CourseRepository courseRepository, StudentCourseRepository studentCourseRepository) {
@@ -44,7 +44,7 @@ public class DataSeedService {
     public void seedStudent() {
         Faker faker = new Faker(INDONESIAN);
 
-        for (int i = 0; i < NUMBER_OF_STUDENTS; i++) {
+        for (int i = 0; i < numOfStudents; i++) {
             Student student = new Student();
             student.setStudentCode(faker.code()
                                         .ean8());
@@ -61,7 +61,7 @@ public class DataSeedService {
 
     public void seedCourse() {
         Faker faker = new Faker(INDONESIAN);
-        for (int i = 0; i < NUMBER_OF_COURSE; i++) {
+        for (int i = 0; i < numOfCourses; i++) {
             Course course = new Course();
             course.setCourseCode(faker.code()
                                       .ean8());
