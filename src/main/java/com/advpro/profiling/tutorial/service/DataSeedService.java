@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DataSeedService {
+
+    private static final SecureRandom random = new SecureRandom();
 
     @Autowired
     private StudentRepository studentRepository;
@@ -66,7 +69,7 @@ public class DataSeedService {
         List<Course> courses = courseRepository.findAll();
 
         for (Student student : students) {
-            List<Course> selectedCourses = new Random().ints(0, courses.size())
+            List<Course> selectedCourses = random.ints(0, courses.size())
                     .distinct()
                     .limit(2)
                     .mapToObj(courses::get)
