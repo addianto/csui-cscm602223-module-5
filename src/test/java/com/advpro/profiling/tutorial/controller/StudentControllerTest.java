@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = StudentController.class)
@@ -24,7 +25,7 @@ class StudentControllerTest {
     private StudentService studentService;
 
     @Test
-    void highestGpa_found() throws Exception {
+    void highestGpa_found_OK() throws Exception {
         when(studentService.findStudentWithHighestGpa()).thenReturn(Optional.of(new Student()));
 
         mockMvc.perform(get("/highest-gpa"))
@@ -34,12 +35,23 @@ class StudentControllerTest {
     }
 
     @Test
-    void highestGpa_notFound() throws Exception {
+    void highestGpa_notFound_404() throws Exception {
         when(studentService.findStudentWithHighestGpa()).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/highest-gpa"))
                .andExpectAll(
                    status().isNotFound()
                );
+    }
+
+    @Test
+    void allStudentName_twoStudents() throws Exception {
+        when(studentService.joinStudentNames()).thenReturn("John Doe, Jane Doe");
+
+        mockMvc.perform(get("/all-student-name"))
+            .andExpectAll(
+                status().isOk(),
+                content().string("John Doe, Jane Doe")
+            );
     }
 }
