@@ -14,7 +14,6 @@ import java.util.Optional;
 /**
  * @author muhammad.khadafi
  */
-
 @RestController
 public class StudentController {
 
