@@ -1,9 +1,11 @@
 ---
 # Note: The following configuration is only for development purpose.
-# Do not use the same configuration on production!
+# Do not use the same configuration in production!
 services:
   database:
     image: docker.io/library/postgres:16.2-alpine
+    ## Note: The default PostgreSQL published container port on the host is 5432.
+    ## You can change it to another port.
     ports:
       - "127.0.0.1:5432:5432/tcp"
     environment:
@@ -14,6 +16,7 @@ services:
       - "database_data:/var/lib/postgresql/data"
   pgadmin:
     image: docker.io/dpage/pgadmin4:8.4
+    ## Note: Use `docker ps` output to get the published port for the pgadmin instance.
     ports:
       - "80/tcp"
     environment:
