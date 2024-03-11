@@ -25,7 +25,7 @@ class StudentControllerTest {
     private StudentService studentService;
 
     @Test
-    void highestGpa_found_OK() throws Exception {
+    void highestGpa_found_Ok() throws Exception {
         when(studentService.findStudentWithHighestGpa()).thenReturn(Optional.of(new Student()));
 
         mockMvc.perform(get("/highest-gpa"))

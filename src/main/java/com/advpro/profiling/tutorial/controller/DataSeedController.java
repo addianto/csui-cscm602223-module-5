@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DataSeedController {
 
+    private final DataSeedService dataSeedService;
+
     @Autowired
-    private DataSeedService dataSeedService;
+    public DataSeedController(DataSeedService dataSeedService) {
+        this.dataSeedService = dataSeedService;
+    }
 
     @GetMapping("/seed-data-master")
     public ResponseEntity<String> seedMaster() {
