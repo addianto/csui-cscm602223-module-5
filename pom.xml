@@ -58,6 +58,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>ghcr.io/${registry.username}/${project.artifactId}:${project.version}</name>
+                        <env>
+                            <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                        </env>
+                    </image>
+                </configuration>
             </plugin>
             <!-- Taken from: https://github.com/binkley/modern-java-practices/blob/master/pom.xml -->
             <plugin>
