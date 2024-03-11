@@ -21,7 +21,7 @@ import java.util.Locale;
 @Service
 public class DataSeedService {
 
-    private static final SecureRandom random = new SecureRandom();
+    private static final SecureRandom RANDOM = new SecureRandom();
     private static final Locale INDONESIAN = new Locale.Builder().setLanguage("id").setRegion("ID").build();
 
     private final StudentRepository studentRepository;
@@ -79,7 +79,7 @@ public class DataSeedService {
         List<Course> courses = courseRepository.findAll();
 
         for (Student student : students) {
-            List<Course> selectedCourses = random.ints(0, courses.size())
+            List<Course> selectedCourses = RANDOM.ints(0, courses.size())
                                                  .distinct()
                                                  .limit(2)
                                                  .mapToObj(courses::get)
