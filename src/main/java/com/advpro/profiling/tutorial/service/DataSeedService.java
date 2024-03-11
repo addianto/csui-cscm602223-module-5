@@ -22,6 +22,7 @@ import java.util.Locale;
 public class DataSeedService {
 
     private static final SecureRandom random = new SecureRandom();
+    private static final Locale INDONESIAN = new Locale.Builder().setLanguage("id").setRegion("ID").build();
 
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
@@ -41,7 +42,7 @@ public class DataSeedService {
     }
 
     public void seedStudent() {
-        Faker faker = new Faker(new Locale("in-ID"));
+        Faker faker = new Faker(INDONESIAN);
 
         for (int i = 0; i < NUMBER_OF_STUDENTS; i++) {
             Student student = new Student();
@@ -59,7 +60,7 @@ public class DataSeedService {
     }
 
     public void seedCourse() {
-        Faker faker = new Faker(new Locale("in-ID"));
+        Faker faker = new Faker(INDONESIAN);
         for (int i = 0; i < NUMBER_OF_COURSE; i++) {
             Course course = new Course();
             course.setCourseCode(faker.code()
