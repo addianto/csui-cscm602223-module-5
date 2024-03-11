@@ -13,6 +13,21 @@ jobs:
     name: Run test suite
     runs-on: ubuntu-22.04
 
+    services:
+      database:
+        image: docker.io/library/postgres:16.2-alpine
+        env:
+          POSTGRES_USER: exercise
+          POSTGRES_PASSWORD: JLCHaWtXsC5q7YKC
+          POSTGRES_DB: exercise
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     env:
       # Based on the Maven CI/CD template from GitLab:
       # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
