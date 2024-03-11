@@ -1,0 +1,54 @@
+---
+name: Continuous Integration (CI)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-22.04
+
+    env:
+      # Based on the Maven CI/CD template from GitLab:
+      # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
+      # It is recommended to use these variables to reduce noise in the job logs
+      MAVEN_OPTS: >
+        -Dhttps.protocols=TLSv1.2
+        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+        -Dorg.slf4j.simpleLogger.showDateTime=true
+        -Djava.awt.headless=true
+      MAVEN_CLI_OPTS: >
+        --batch-mode
+        --errors
+        --fail-at-end
+        --show-version
+        -DinstallAtEnd=true
+        -DdeployAtEnd=true
+
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+      - name: Set up Java
+        uses: actions/setup-java@v4.1.0
+        with:
+          distribution: liberica
+          java-version: 21
+          java-package: jdk
+          cache: maven
+      - name: Run unit tests
+        run: ./mvnw $MAVEN_CLI_OPTS test
+      - name: Run SonarScanner
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./mvnw $MAVEN_CLI_OPTS sonar:sonar \
+            -DskipTests \
+            -Dsonar.projectKey=addianto_csui-cscm602223-module-5
