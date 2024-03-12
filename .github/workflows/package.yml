@@ -1,0 +1,55 @@
+---
+name: Package
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+
+    env:
+      # Based on the Maven CI/CD template from GitLab:
+      # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
+      # It is recommended to use these variables to reduce noise in the job logs
+      MAVEN_OPTS: >
+        -Dhttps.protocols=TLSv1.2
+        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+        -Dorg.slf4j.simpleLogger.showDateTime=true
+        -Djava.awt.headless=true
+      MAVEN_CLI_OPTS: >
+        --batch-mode
+        --errors
+        --fail-at-end
+        --show-version
+        -DinstallAtEnd=true
+        -DdeployAtEnd=true
+
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v4.1.1
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3.1.0
+      - name: Set up Java
+        uses: actions/setup-java@v4.1.0
+        with:
+          distribution: liberica
+          java-version: 21
+          java-package: jdk
+          cache: maven
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.0.0
+        with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & publish the container image
+        env:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        run: ./mvnw $MAVEN_CLI_OPTS spring-boot:build-image \
+          -Ddocker.publishRegistry.username=$username \
+          -Ddocker.publishRegistry.password=$password \
+          -Ddocker.publishRegistry.url=ghcr.io
