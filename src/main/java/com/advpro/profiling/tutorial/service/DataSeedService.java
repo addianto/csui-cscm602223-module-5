@@ -6,14 +6,14 @@ import com.advpro.profiling.tutorial.model.StudentCourse;
 import com.advpro.profiling.tutorial.repository.CourseRepository;
 import com.advpro.profiling.tutorial.repository.StudentCourseRepository;
 import com.advpro.profiling.tutorial.repository.StudentRepository;
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * @author muhammad.khadafi
@@ -21,37 +21,54 @@ import java.util.stream.Collectors;
 @Service
 public class DataSeedService {
 
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private CourseRepository courseRepository;
-    @Autowired
-    private StudentCourseRepository studentCourseRepository;
+    private static final SecureRandom RANDOM = new SecureRandom();
+    private static final Locale INDONESIAN = new Locale.Builder().setLanguage("id").setRegion("ID").build();
 
-    private static final int NUMBER_OF_STUDENTS = 20_000;
-    private static final int NUMBER_OF_COURSE = 10;
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
+    private final StudentCourseRepository studentCourseRepository;
+
+    @Value("${seed.students:20000}")
+    private int numOfStudents;
+
+    @Value("${seed.courses:10}")
+    private int numOfCourses;
+
+    @Autowired
+    public DataSeedService(StudentRepository studentRepository, CourseRepository courseRepository, StudentCourseRepository studentCourseRepository) {
+        this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
+        this.studentCourseRepository = studentCourseRepository;
+    }
 
     public void seedStudent() {
-        Faker faker = new Faker(new Locale("in-ID"));
+        Faker faker = new Faker(INDONESIAN);
 
-        for (int i = 0; i < NUMBER_OF_STUDENTS; i++) {
+        for (int i = 0; i < numOfStudents; i++) {
             Student student = new Student();
-            student.setStudentCode(faker.code().ean8());
-            student.setName(faker.name().fullName());
-            student.setFaculty(faker.educator().course());
-            student.setGpa(faker.number().randomDouble(2, 2, 4));
+            student.setStudentCode(faker.code()
+                                        .ean8());
+            student.setName(faker.name()
+                                 .fullName());
+            student.setFaculty(faker.educator()
+                                    .course());
+            student.setGpa(faker.number()
+                                .randomDouble(2, 2, 4));
 
             studentRepository.save(student);
         }
     }
 
     public void seedCourse() {
-        Faker faker = new Faker(new Locale("in-ID"));
-        for (int i = 0; i < NUMBER_OF_COURSE; i++) {
+        Faker faker = new Faker(INDONESIAN);
+        for (int i = 0; i < numOfCourses; i++) {
             Course course = new Course();
-            course.setCourseCode(faker.code().ean8());
-            course.setName(faker.book().title());
-            course.setDescription(faker.lorem().sentence());
+            course.setCourseCode(faker.code()
+                                      .ean8());
+            course.setName(faker.book()
+                                .title());
+            course.setDescription(faker.lorem()
+                                       .sentence());
 
             courseRepository.save(course);
         }
@@ -62,11 +79,11 @@ public class DataSeedService {
         List<Course> courses = courseRepository.findAll();
 
         for (Student student : students) {
-            List<Course> selectedCourses = new Random().ints(0, courses.size())
-                    .distinct()
-                    .limit(2)
-                    .mapToObj(courses::get)
-                    .collect(Collectors.toList());
+            List<Course> selectedCourses = RANDOM.ints(0, courses.size())
+                                                 .distinct()
+                                                 .limit(2)
+                                                 .mapToObj(courses::get)
+                                                 .toList();
 
             for (Course course : selectedCourses) {
                 StudentCourse studentCourse = new StudentCourse(student, course);
